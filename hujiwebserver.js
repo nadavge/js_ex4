@@ -1,3 +1,4 @@
+var hujinet = require('./hujinet');
 
 /**
 * @brief Start a new huji webserver
@@ -9,9 +10,16 @@
 * @return server as serverObj
 */
 module.exports.start = function(port, callback) {
-
+    return new HujiWebServer(port, callback);
 }
 
+/**
+* @brief Handle requests for a static webserver relative to rootFolder
+*
+* @param rootFolder the root of the static serving folder
+*
+* @return a request handler for a static webserver
+*/
 module.exports.static = function(rootFolder) {
 
 }
@@ -23,10 +31,13 @@ module.exports.myUse = function() {
     }
 }
 
-function serverObj(port, callback) {
+function HujiWebServer(port, callback) {
+    var connHandler = new hujinet.ConnectionHandler(this, callback);
+    var router = new Router();
 
-    //TODO initiate actual server
-    //TODO save port as read-only
+    Object.defineProperty(this, 'port', {
+        value: port;
+    });
 
     this.use = function(requestHandler) {
         /* TODO handle params.length === 2, resource = requestHandler,
@@ -35,7 +46,7 @@ function serverObj(port, callback) {
     }
 
     this.stop = function(callback) {
-
+        connHandler.stop(callback);
     }
 
 }
