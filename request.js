@@ -1,6 +1,24 @@
 var HTTP_PROTOCOL = "http";
+var TYPE_STR = "Content-Type";
+var SLASH_SEPARATOR = '/';
 
-module.exports = function(query, method, cookies, path, host, protocol, body) {
+function pathIncluded(checkedPath, includingPath) {
+    var splitChecked = checkedPath.split(SLASH_SEPARATOR);
+    var splitIncluding = includingPath.split(SLASH_SEPARATOR);
+
+    for (var i = 0; i < splitChecked.length; i++) {
+        if ((splitChecked[i] !== splitIncluding[i]) && (splitIncluding[i] !== '*'))
+            return false;
+    }
+
+    if ((splitChecked.length !== splitIncluding.length) && (splitIncluding[i - 1] !== '*'))
+        return false;
+
+    return true;
+
+}
+
+module.exports = function (headers, query, method, cookies, path, host, protocol, body) {
 
     this.query = query;
     this.method = method;
@@ -8,25 +26,55 @@ module.exports = function(query, method, cookies, path, host, protocol, body) {
     this.path = path;
     this.host = host;
 
-    if(protocol != null)
+    var headers = headers;
+    var urlParams = {};
+
+    if (protocol !== null) {
         this.protocol = protocol;
-    else
+    }
+
+    else {
         this.protocol = HTTP_PROTOCOL;
+    }
 
     this.body = body;
 
-    this.get = function(field)
-    {
+    
+    this.get = function (field) {
+        if (field in headers) {
+            return headers[field];
+        }
+        return undefined;
+    };
 
-    }
+    this.param = function (name) {
 
-    this.param = function(name)
-    {
+        if(urlParams.hasOwnProperty(name))
+            return urlParams[name];
+        if(query.hasOwnProperty(name))
+            return query[name];
 
-    }
+        return undefined;
+    };
 
-    this.is = function(type)
-    {
+    this.is = function (type) {
+        var contentType = this.get(TYPE_STR);
 
-    }
-}
+        if (type === contentType)
+            return true;
+
+        var splitType = type.split(SLASH_SEPARATOR);
+
+        if (type === splitType[splitType.length - 1])
+            return true;
+
+        if (pathIncluded(contentType, type))
+            return true;
+
+        return false;
+    };
+
+    this.setUrlParams = function (urlParamsArg) {
+        urlParams = urlParamsArg;
+    };
+};
