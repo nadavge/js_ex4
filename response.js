@@ -8,3 +8,5 @@ module.exports = function() {
     json(body)
     */
 }
+
+//TODO in send, check whether the connection needs to be closed or not
