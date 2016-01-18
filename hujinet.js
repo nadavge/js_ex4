@@ -27,7 +27,7 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
                 data = data.toString('ascii', 0, data.length)
 
                 try {
-                    request = requestparser.parse(data);
+                    request = requestParser.parse(data);
                     /* TODO Transfer the request to the relevant handler using the router
                      * the connection should be embedded in the response
                      * hujiwebserver.route(request, response);
