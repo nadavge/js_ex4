@@ -27,7 +27,7 @@ module.exports.static = function(rootFolder) {
 module.exports.myUse = function() {
 
     this.toString() = function() {
-
+        //TODO add a description
     }
 }
 
@@ -39,10 +39,21 @@ function HujiWebServer(port, callback) {
         value: port;
     });
 
-    this.use = function(requestHandler) {
-        /* TODO handle params.length === 2, resource = requestHandler,
-         * and so on.
-         */
+    /**
+    * @brief Bind the resource to the given requestHandler. If no resource was
+    *    specified, use '/' as the resource
+    *
+    * @param resource The resource. optional, defaults to '/'
+    * @param requestHandler The request handler for the resource
+    */
+    this.use = function(resource, requestHandler) {
+        // If only requestHandler was passed, use root as the resource
+        if (requestHandler === undefined) {
+            requestHandler = resource;
+            resource = '/';
+        }
+
+        // TODO bind the resource
     }
 
     this.stop = function(callback) {
