@@ -41,7 +41,7 @@ module.exports = function (headers, query, method, cookies, path, host, protocol
 
     
     this.get = function (field) {
-        if (field in headers) {
+        if (headers.hasOwnProperty(field)) {
             return headers[field];
         }
         return undefined;

@@ -41,9 +41,12 @@ function parseCookies(headers){
         splitCookies = cookiesStr.split(SEMICOLOMN_SEPERATOR);
 
         for (var tempCookie in splitCookies) {
-            tempCookie = trim(tempCookie);
-            tempSplitCookie = tempCookie.split(EQUAL_SEPERATOR);
-            cookies[tempSplitCookie[0]] = tempSplitCookie[1];
+
+            if(splitCookies.hasOwnProperty(tempCookie)){
+                tempCookie = trim(tempCookie);
+                tempSplitCookie = tempCookie.split(EQUAL_SEPERATOR);
+                cookies[tempSplitCookie[0]] = tempSplitCookie[1];
+            }
         }
     }
 
