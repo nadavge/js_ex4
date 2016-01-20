@@ -44,29 +44,34 @@ function matchResult(handler, params, index) {
 */
 function Router() {
     var map = new Array();
+    var params;
 
     /**
     * @brief Route a given url to its request handler. Can start from last
     *   mapping in the router
     *
-    * @param url The url pathname
+    * @param path the url pathname
     * @param lastMatch the lest match object of type matchResult
     *
-    * @return The next match, undefined if non-existent
+    * @return The next match, null if non-existent
     */
-    this.route = function(url, lastMatch) {
+    this.route = function(path, lastMatch) {
         var i;
 
-        if (lastMap === undefined) {
+        if (lastMatch === undefined) {
             i = 0;
         } else {
-            i = lastMap.index+1;
+            i = lastMatch.index+1;
         }
 
         for (; i < map.length; ++i) {
-            //TODO match the pathname
-            //TODO return with start+1
+            params = match(map[i].url, path);
+            if (params !== null) {
+                return new matchResult(map[i].handler, params, i);
+            }
         }
+
+        return null;
     }
 
     this.add = function(url, handler) {
@@ -104,9 +109,9 @@ function match(url, path) {
         return null;
     }
 
+    // Compare each segment of the url to the pathname, for either equality or
+    // in case of a url variable, assignment into params
     for (i = 0; i < url.length; ++i) {
-        console.log(i);
-        console.log(url[i]);
         if (url[i].length > 0 && url[i][0] === URI_VAR_INITIAL) {
             // Use the remainder of this part of the url as the param name
             paramName = url[i].substr(1);
