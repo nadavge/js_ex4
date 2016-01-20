@@ -1,6 +1,7 @@
 var net = require('net');
 var requestParser = require('./hujirequestparser');
 
+//TODO handle in the send an error in case the connection has already timed-out
 const CONNECTION_TIMEOUT = 2000; // Connection timeout in ms
 
 /**
