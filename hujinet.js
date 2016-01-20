@@ -28,10 +28,8 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
 
                 try {
                     request = requestParser.parse(data);
-                    /* TODO Transfer the request to the relevant handler using the router
-                     * the connection should be embedded in the response
-                     * hujiwebserver.route(request, response);
-                     */
+                    // TODO Embbed the connection in the response
+                    hujiwebserver.route(request, response);
                 } catch (e) {
                     // TODO Handle a faulty HTTP, and send 500
                     // conn.end(RESPONSE with 500);

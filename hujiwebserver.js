@@ -1,4 +1,5 @@
 var hujinet = require('./hujinet');
+var Router = require('./router');
 
 /**
 * @brief Start a new huji webserver
@@ -24,6 +25,8 @@ module.exports.static = function(rootFolder) {
 
 }
 
+// TODO implement a what is my ip function?
+// Maybe a redirect to another path?
 module.exports.myUse = function() {
 
     this.toString() = function() {
@@ -34,6 +37,7 @@ module.exports.myUse = function() {
 function HujiWebServer(port, callback) {
     var connHandler = new hujinet.ConnectionHandler(this, callback);
     var router = new Router();
+    var that = this;
 
     Object.defineProperty(this, 'port', {
         value: port
@@ -53,7 +57,23 @@ function HujiWebServer(port, callback) {
             resource = '/';
         }
 
-        // TODO bind the resource
+        router.add(resource, requestHandler);
+    }
+
+    this.route = function(request, response, lastMatch) {
+        var match;
+
+        match = router.route(request.path, lastMatch);
+        if (match === null) {
+            // TODO respond with 404
+        } else {
+            request.setUrlParams(match.params);
+            match.handler(request, response, function() {
+                that.route(request, response, match);
+            });
+
+            // TODO check if send was called, otherwise send a 500
+        }
     }
 
     this.stop = function(callback) {
