@@ -36,7 +36,7 @@ function HujiWebServer(port, callback) {
     var router = new Router();
 
     Object.defineProperty(this, 'port', {
-        value: port;
+        value: port
     });
 
     /**
