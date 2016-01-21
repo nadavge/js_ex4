@@ -1,7 +1,7 @@
 var net = require('net');
 var requestParser = require('./hujirequestparser');
+var Response = require('./response');
 
-//TODO handle in the send an error in case the connection has already timed-out
 const CONNECTION_TIMEOUT = 2000; // Connection timeout in ms
 
 /**
@@ -29,13 +29,28 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
 
                 try {
                     request = requestParser.parse(data);
-                    // TODO create response object (needs only http version)
-                    // TODO Embbed the connection in the response
-                    hujiwebserver.route(request, response);
-                    // TODO check whether to close the connection
                 } catch (e) {
-                    // TODO Handle a faulty HTTP, and send 500
-                    // conn.end(RESPONSE with 500);
+                    console.log('Error occured while parsing: ' + e);
+                    response = new Response(DEFAULT_HTTP_VERSION, conn);
+                    response.status(CODE_SERVER_ERROR).send(BODY_SERVER_ERROR);
+                    conn.end();
+                    return;
+                }
+
+                response = new Response(request.version, conn);
+
+                try {
+                    hujiwebserver.route(request, response);
+                } catch (e) {
+                    console.log('Error occured while responding: ' + e);
+                    response
+                        .reset().status(CODE_SERVER_ERROR).send(BODY_SERVER_ERROR);
+                    conn.end();
+                    return;
+                }
+
+                if (request.shouldClose()) {
+                    conn.end();
                 }
             }
         );
