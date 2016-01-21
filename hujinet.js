@@ -22,6 +22,7 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
                 var request;
                 var response;
 
+                // Timeout timer for the connection
                 clearTimeout(timer);
                 timer = setTimeout(function() { conn.end(); }, CONNECTION_TIMEOUT);
 
@@ -49,13 +50,13 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
                     return;
                 }
 
+                // Check whether the request hints for a connection close
                 if (request.shouldClose()) {
                     conn.end();
                 }
             }
         );
 
-        // To avoid double closing of the connection
         conn.on('end', function() {
                 clearTimeout(timer);
             }
@@ -63,6 +64,11 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
 
     });
 
+    /**
+    * @brief Stop the connection listener
+    *
+    * @param callback the success/fail callback
+    */
     this.stop = function(callback) {
         server.close(callback);
     }

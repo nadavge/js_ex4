@@ -84,6 +84,13 @@ module.exports.myUse = function(newUrl) {
     }
 }
 
+/**
+* @brief A huji web server, capable of dynamic HTTP handling.
+*   runs on a specified port.
+*
+* @param port the port to run on
+* @param callback a success/fail callback for the initialization
+*/
 function HujiWebServer(port, callback) {
     var connHandler = new hujinet.ConnectionHandler(this, callback);
     var router = new Router();
@@ -110,6 +117,14 @@ function HujiWebServer(port, callback) {
         router.add(resource, requestHandler);
     }
 
+    /**
+    * @brief Route a request to its matching handler. In case it's been called
+    *   from next, search from the last match (lastMatch)
+    *
+    * @param request the HTTP request object
+    * @param response the HTTP response object
+    * @param lastMatch the last match for the given path
+    */
     this.route = function(request, response, lastMatch) {
         var match;
 
@@ -131,6 +146,11 @@ function HujiWebServer(port, callback) {
         }
     }
 
+    /**
+    * @brief Stop the server, and call the callback on either success or failure
+    *
+    * @param callback the handling function for the termination
+    */
     this.stop = function(callback) {
         connHandler.stop(callback);
     }
