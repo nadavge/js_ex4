@@ -1,14 +1,12 @@
 var SET_COOKIE_STR = "Set-Cookie: ";
 var EQUAL_SEPARATOR = "=";
-var SEMICOLOMN_SEPARATOR = "; ";
+var SEMICOLON_SEPARATOR = "; ";
 var END_LINE = "\r\n";
 var SPACE_SEPARATOR = ' ';
 var COLON_SEPARATOR = ':';
 
 var BODY_TYPE_STR = "Content-Type";
 var BODY_LENGTH_STR = "Content-Length";
-
-var httpVersion = "HTTP/1.1";
 
 var mimetypes = {
     'js': 'application/javascript; charset=utf-8;',
@@ -21,21 +19,23 @@ var mimetypes = {
     'json': 'application/json'
 };
 
-function cookie(name, value, options){
+function Cookie(name, value, options){
+    var that = this;
+
     this.name = name;
     this.value = value;
     this.options = options;
 
     this.toString = function()
     {
-        var cookieString = SET_COOKIE_STR + this.name + EQUAL_SEPARATOR + this.value;
+        var cookieString = SET_COOKIE_STR + that.name + EQUAL_SEPARATOR + that.value;
 
-        for(var option in this.options){
-            if(this.options.hasOwnProperty(option)){
-                cookieString += SEMICOLOMN_SEPARATOR + option;
+        for(var option in that.options){
+            if(that.options.hasOwnProperty(option)){
+                cookieString += SEMICOLON_SEPARATOR + option;
 
-                if(this.options[option] !== null){
-                    cookieString += EQUAL_SEPARATOR + this.options[option];
+                if(that.options[option] !== null){
+                    cookieString += EQUAL_SEPARATOR + that.options[option];
                 }
 
                 else{
@@ -49,34 +49,17 @@ function cookie(name, value, options){
     }
 }
 
-//module.exports.compose = function(version, statusCode, bodyType, bodyLength) {
-//    var response = '';
-//    // add the first response header to the stream
-//    response += version.concat(SPACE_SEPARATOR, statusCode, LINE_SEPARATOR);
-//
-//    //build both headers that describe the response body
-//    response += BODY_TYPE_STR.concat(COLON_SEPARATOR, bodyType, LINE_SEPARATOR);
-//    response += BODY_LENGTH_STR.concat(COLON_SEPARATOR, bodyLength, LINE_SEPARATOR);
-//    //writing the body content to the stream
-//    response += LINE_SEPARATOR;
-//
-//    return response;
-//}
+module.exports = function(version, conn) {
+    var that = this;
 
-module.exports = function(headers) {
+    var version = version;
+    var conn = conn;
 
-    var headers = headers;
-    var statusCode = "200";
+    var headers = {};
     var cookies = {};
-
-    /*
-    set(field, value)
-    status(code)
-    get(field)
-    cookie(name, value, [options])
-    send(body)
-    json(body)
-    */
+    var statusCode = "200";
+    headers[BODY_TYPE_STR] = mimetypes['html'];
+    var sent = false;
 
     //search for a matching object key to prop, Case Insensitive.
     var CIgetProperty = function(object, prop){
@@ -90,17 +73,21 @@ module.exports = function(headers) {
 
     var getHeaderStr = function(){
         var responseString = "";
-        responseString += httpVersion.concat(SPACE_SEPARATOR, statusCode, END_LINE);
+        responseString += version.concat(SPACE_SEPARATOR, statusCode, END_LINE);
+        responseString += BODY_TYPE_STR.concat(COLON_SEPARATOR, headers[BODY_TYPE_STR], END_LINE);
+        responseString += BODY_LENGTH_STR.concat(COLON_SEPARATOR, headers[BODY_LENGTH_STR], END_LINE);
 
         for(var header in headers){
-            if(headers.hasOwnProperty(header)){
-                responseString += header.concat(COLON_SEPARATOR, headers[header], END_LINE);
+            if((header !== BODY_TYPE_STR) && (header !== BODY_LENGTH_STR)){
+                if(headers.hasOwnProperty(header)){
+                    responseString += header.concat(COLON_SEPARATOR, headers[header], END_LINE);
+                }
             }
         }
 
         responseString += END_LINE;
         return responseString;
-    }
+    };
 
     this.set = function(field, value){
 
@@ -127,6 +114,7 @@ module.exports = function(headers) {
     //easy to implement. we should just decide where the response header will be made
     this.status = function(code){
         statusCode = code;
+        return that;
     };
 
     this.get = function(field){
@@ -142,28 +130,41 @@ module.exports = function(headers) {
 
     };
 
-    //should have options optionally
     this.cookie = function(name, value) {
         var cookieOptions = null;
         if(arguments.length == 3){
             cookieOptions = arguments[2];
         }
 
-        cookies.push(new cookie(name, value, cookieOptions));
+        cookies.push(new Cookie(name, value, cookieOptions));
     };
 
     this.send = function(body){
+        sent = true;
         headers[BODY_LENGTH_STR] = body.length;
-
+        conn.write(getHeaderStr());
+        conn.write(body);
     };
 
     this.json = function(body){
-
+        headers[BODY_TYPE_STR] = mimetypes['json'];
+        that.send(JSON.stringify(body));
     };
 
     this.type = function(type){
         headers[BODY_TYPE_STR] = mimetypes[type];
-    }
+    };
 
+    this.reset = function(){
+        headers = {};
+        cookies = {};
+        statusCode = "200";
+        headers[BODY_TYPE_STR] = mimetypes['html'];
+        return that;
+    };
+
+    this.wasSent = function(){
+        return sent;
+    }
 
 }

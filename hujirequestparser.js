@@ -6,16 +6,11 @@ var HTTP_VERSION = 'version';
 var VERSION_INDEX = 2;
 var SPACE_SEPARATOR = ' ';
 var COLON_SEPARATOR = ':';
-var SEMICOLOMN_SEPERATOR = ';';
-var EQUAL_SEPERATOR = '=';
+var SEMICOLON_SEPARATOR = ';';
+var EQUAL_SEPARATOR = '=';
 var LINE_SEPARATOR = '\r\n';
-
-var GET_REQUEST_METHOD = "GET";
-var BODY_TYPE_STR = "Content-Type";
-var BODY_LENGTH_STR = "Content-Length";
 var COOKIE_HEADER = 'Cookie';
 
-var REQUEST_METHOD_RESTRICTION = new Error("This server only accepts GET requests!");
 var REQUEST_FORMAT_INVALID = new Error("The provided HTTP request format was invalid!");
 
 var url = require('url');
@@ -38,13 +33,13 @@ function parseCookies(headers){
 
     if(headers.hasOwnProperty(COOKIE_HEADER)) {
         cookiesStr = headers[COOKIE_HEADER];
-        splitCookies = cookiesStr.split(SEMICOLOMN_SEPERATOR);
+        splitCookies = cookiesStr.split(SEMICOLON_SEPARATOR);
 
         for (var tempCookie in splitCookies) {
 
             if(splitCookies.hasOwnProperty(tempCookie)){
-                tempCookie = trim(tempCookie);
-                tempSplitCookie = tempCookie.split(EQUAL_SEPERATOR);
+                tempCookie = tempCookie.trim();
+                tempSplitCookie = tempCookie.split(EQUAL_SEPARATOR);
                 cookies[tempSplitCookie[0]] = tempSplitCookie[1];
             }
         }
@@ -63,16 +58,15 @@ module.exports.parse = function(requestString) {
     var headerBody;
 
     var fullUrl, parsedUrl;
-    var query, method, cookies, path, host, protocol, body;
+    var query, method, cookies, path, host, version, protocol, body;
 
     //parse first request line
     var firstHeaderParts = parseFirstHeader(requestLines[0]);
     method = firstHeaderParts[HTTP_METHOD];
-
-
+    version = firstHeaderParts[HTTP_VERSION];
     fullUrl = firstHeaderParts[HTTP_URI];
-    parsedUrl = url.parse(fullUrl, true);
 
+    parsedUrl = url.parse(fullUrl, true);
     query = parsedUrl.query;
     path = parsedUrl.pathname;
     //in case there's a port in the host name
@@ -102,19 +96,5 @@ module.exports.parse = function(requestString) {
     //all the remaining lines in requestLines are the request body.
     body = requestLines.join(LINE_SEPARATOR);
     cookies = parseCookies(headers);
-    return new request(headers, query, method, cookies, path, host, protocol, body);
+    return new request(headers, query, method, cookies, path, host, version, protocol, body);
 };
-
-//module.exports.compose = function(version, statusCode, bodyType, bodyLength) {
-//    var response = '';
-//    // add the first response header to the stream
-//    response += version.concat(SPACE_SEPARATOR, statusCode, LINE_SEPARATOR);
-//
-//    //build both headers that describe the response body
-//    response += BODY_TYPE_STR.concat(COLON_SEPARATOR, bodyType, LINE_SEPARATOR);
-//    response += BODY_LENGTH_STR.concat(COLON_SEPARATOR, bodyLength, LINE_SEPARATOR);
-//    //writing the body content to the stream
-//    response += LINE_SEPARATOR;
-//
-//    return response;
-//}

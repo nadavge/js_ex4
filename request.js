@@ -18,13 +18,14 @@ function pathIncluded(checkedPath, includingPath) {
 
 }
 
-module.exports = function (headers, query, method, cookies, path, host, protocol, body) {
+module.exports = function (headers, query, method, cookies, path, host, version, protocol, body) {
 
     this.query = query;
     this.method = method;
     this.cookies = cookies;
     this.path = path;
     this.host = host;
+    this.version = version;
 
     var headers = headers;
     var urlParams = {};
@@ -39,6 +40,14 @@ module.exports = function (headers, query, method, cookies, path, host, protocol
 
     this.body = body;
 
+    this.shouldClose = function(){
+        if ((headers['Connection'] !== 'keep-alive' &&
+            version === 'HTTP/1.0') ||
+            headers['Connection'] === 'close'){
+            return true;
+        }
+        return false;
+    }
     
     this.get = function (field) {
         if (headers.hasOwnProperty(field)) {
