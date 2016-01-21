@@ -19,6 +19,14 @@ var mimetypes = {
     'json': 'application/json'
 };
 
+var statusMessages = {
+    200: ' OK',
+    302: ' Found',
+    403: ' Forbidden',
+    404: ' Not Found',
+    500: ' Internal Server Error'
+}
+
 function Cookie(name, value, options){
     var that = this;
 
@@ -71,7 +79,7 @@ module.exports = function(version, conn) {
 
     var getHeaderStr = function(){
         var responseString = "";
-        responseString += version.concat(SPACE_SEPARATOR, statusCode, END_LINE);
+        responseString += version.concat(SPACE_SEPARATOR, statusCode, statusMessages[statusCode], END_LINE);
         responseString += BODY_TYPE_STR.concat(COLON_SEPARATOR, headers[BODY_TYPE_STR], END_LINE);
         responseString += BODY_LENGTH_STR.concat(COLON_SEPARATOR, headers[BODY_LENGTH_STR], END_LINE);
 

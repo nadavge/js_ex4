@@ -14,6 +14,7 @@ var COOKIE_HEADER = 'Cookie';
 var REQUEST_FORMAT_INVALID = new Error("The provided HTTP request format was invalid!");
 
 var url = require('url');
+var request = require('./request.js');
 
 //parse the main packet header
 function parseFirstHeader(header) {
@@ -53,7 +54,7 @@ module.exports.parse = function(requestString) {
     //split by lines, remove first useless line
     var requestLines = requestString.split(LINE_SEPARATOR);
     var header;
-    var headers = [];
+    var headers = {};
     var headerKey;
     var headerBody;
 

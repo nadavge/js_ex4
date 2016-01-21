@@ -1,5 +1,5 @@
 var HTTP_PROTOCOL = "http";
-var TYPE_STR = "Content-Type";
+var BODY_TYPE_STR = "Content-Type";
 var SLASH_SEPARATOR = '/';
 
 function pathIncluded(checkedPath, includingPath) {
@@ -59,7 +59,6 @@ module.exports = function (headers, query, method, cookies, path, host, version,
     };
 
     this.param = function (name) {
-
         if(urlParams.hasOwnProperty(name))
             return urlParams[name];
         if(query.hasOwnProperty(name))
@@ -69,14 +68,13 @@ module.exports = function (headers, query, method, cookies, path, host, version,
     };
 
     this.is = function (type) {
-        var contentType = that.get(TYPE_STR);
+        var contentType = that.get(BODY_TYPE_STR);
 
         if (type === contentType) {
             return true;
         }
 
-
-        var splitType = type.split(SLASH_SEPARATOR);
+        var splitType = contentType.split(SLASH_SEPARATOR);
 
         if (type === splitType[splitType.length - 1]) {
             return true;
