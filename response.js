@@ -20,7 +20,8 @@ var mimetypes = {
     'jpg': 'image/jpeg',
     'gif': 'image/gif',
     'png': 'image/png',
-    'json': 'application/json'
+    'json': 'application/json',
+    'bin': 'application/octet-stream'
 };
 
 /**
@@ -206,6 +207,18 @@ module.exports = function(version, conn) {
      */
     this.send = function(body){
         sent = true;
+        if (body === undefined || body === null) {
+            body = '';
+        }
+        if (typeof body === 'object') {
+            that.json(body);
+            return;
+        } else if (typeof body === 'buffer') {
+            headers[BODY_TYPE_STR] = mimetypes['bin'];
+        } else if (typeof body === 'number') {
+            body = body.toString();
+        }
+
         headers[BODY_LENGTH_STR] = body.length;
         conn.write(getHeaderStr());
         conn.write(body);
