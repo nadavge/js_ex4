@@ -63,6 +63,7 @@ function parseCookies(headers){
  * @returns {module.exports|exports} - return a request object from the request.js module.
  */
 module.exports.parse = function(requestString) {
+    //console.log(requestString); TODO remove
     //split by lines, remove first useless line
     var requestLines = requestString.split(LINE_SEPARATOR);
     var header;
@@ -111,5 +112,10 @@ module.exports.parse = function(requestString) {
     //all the remaining lines in requestLines are the request body.
     body = requestLines.join(LINE_SEPARATOR);
     cookies = parseCookies(headers);
+
+    if (host === null && headers.hasOwnProperty('Host')) {
+        host = headers['Host'];
+    }
+
     return new request(headers, query, method, cookies, path, host, version, protocol, body);
 };

@@ -4,7 +4,7 @@ var hujinet = require('./hujinet');
 var Router = require('./router');
 
 const CODE_PAGE_NOT_FOUND = 404;
-const BODY_PAGE_NOT_FOUND = 'Page Not Found';
+const BODY_PAGE_NOT_FOUND = 'The requested resource not found';
 
 /**
 * @brief Start a new huji webserver
