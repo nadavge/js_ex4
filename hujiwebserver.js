@@ -92,13 +92,16 @@ module.exports.myUse = function(newUrl) {
 * @param callback a success/fail callback for the initialization
 */
 function HujiWebServer(port, callback) {
-    var connHandler = new hujinet.ConnectionHandler(this, callback);
-    var router = new Router();
+    var connHandler;
+    var router;
     var that = this;
 
     Object.defineProperty(this, 'port', {
         value: port
     });
+
+    connHandler = new hujinet.ConnectionHandler(this, callback);
+    router = new Router();
 
     /**
     * @brief Bind the resource to the given requestHandler. If no resource was

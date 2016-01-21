@@ -3,6 +3,9 @@ var requestParser = require('./hujirequestparser');
 var Response = require('./response');
 
 const CONNECTION_TIMEOUT = 2000; // Connection timeout in ms
+const DEFAULT_HTTP_VERSION = 'HTTP/1.0';
+const CODE_SERVER_ERROR = 500;
+const BODY_SERVER_ERROR = 'Internal Server Error';
 
 /**
 * @brief Connection handler for a hujiwebserver
@@ -72,4 +75,7 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
     this.stop = function(callback) {
         server.close(callback);
     }
+
+    server.on('error', callback);
+    server.listen(hujiwebserver.port, callback);
 }
