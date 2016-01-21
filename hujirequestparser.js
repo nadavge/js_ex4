@@ -44,10 +44,10 @@ function parseCookies(headers){
         cookiesStr = headers[COOKIE_HEADER];
         splitCookies = cookiesStr.split(SEMICOLON_SEPARATOR);
 
-        for (var tempCookie in splitCookies) {
+        for (var i in splitCookies) {
 
-            if(splitCookies.hasOwnProperty(tempCookie)){
-                tempCookie = tempCookie.trim();
+            if(splitCookies.hasOwnProperty(i)){
+                tempCookie = splitCookies[i].trim();
                 tempSplitCookie = tempCookie.split(EQUAL_SEPARATOR);
                 cookies[tempSplitCookie[0]] = tempSplitCookie[1];
             }
