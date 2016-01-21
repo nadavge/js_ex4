@@ -63,7 +63,6 @@ function parseCookies(headers){
  * @returns {module.exports|exports} - return a request object from the request.js module.
  */
 module.exports.parse = function(requestString) {
-    //console.log(requestString); TODO remove
     //split by lines, remove first useless line
     var requestLines = requestString.split(LINE_SEPARATOR);
     var header;
