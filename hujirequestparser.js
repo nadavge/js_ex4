@@ -77,6 +77,11 @@ module.exports.parse = function(requestString) {
     var firstHeaderParts = parseFirstHeader(requestLines[0]);
     method = firstHeaderParts[HTTP_METHOD];
     version = firstHeaderParts[HTTP_VERSION];
+
+    if (version !== "HTTP/1.0" && version !== "HTTP/1.1") {
+            throw REQUEST_FORMAT_INVALID;
+    }
+
     fullUrl = firstHeaderParts[HTTP_URI];
 
     parsedUrl = url.parse(fullUrl, true);

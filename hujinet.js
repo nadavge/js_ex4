@@ -51,6 +51,7 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
                     hujiwebserver.route(request, response);
                 } catch (e) {
                     console.log('Error occured while responding: ' + e);
+                    response = new Response(DEFAULT_HTTP_VERSION, conn);
                     response
                         .reset().status(CODE_SERVER_ERROR).send(BODY_SERVER_ERROR);
                     conn.end();
