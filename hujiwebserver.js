@@ -1,3 +1,5 @@
+var fs = require('fs');
+var path = require('path');
 var hujinet = require('./hujinet');
 var Router = require('./router');
 
@@ -26,6 +28,40 @@ module.exports.start = function(port, callback) {
 */
 module.exports.static = function(rootFolder) {
 
+    return function(request, response, next) {
+        var filepath;
+
+        // Avoid access from outside the rootFolder
+        if (! path.isAbsolute(request.path)) {
+            response.status(403).send('');
+        }
+
+        filepath = path.join(rootFolder, request.path);
+        fs.stat(filepath, function(err, stats) {
+            var extension;
+
+            if (err) {
+                response.status(404).send('');
+                return;
+            }
+
+            if (! stats.isFile()) {
+                response.status(403).send('');
+                return;
+            }
+
+            extension = path.extname(filepath).substring(1);
+            fs.readFile(filepath, function(err, data) {
+                if (err) {
+                    response.status(404).send('');
+                    return;
+                }
+
+                response.type(extension);
+                response.send(data);
+            });
+        });
+    };
 }
 
 // TODO implement a what is my ip function?
