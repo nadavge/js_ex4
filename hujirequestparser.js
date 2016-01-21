@@ -16,7 +16,11 @@ var REQUEST_FORMAT_INVALID = new Error("The provided HTTP request format was inv
 var url = require('url');
 var request = require('./request.js');
 
-//parse the main packet header
+/**
+ * parse the main packet header
+ * @param header - the main header
+ * @returns {{}} - an object holding several fields from the header.
+ */
 function parseFirstHeader(header) {
     var headerParts = header.split(SPACE_SEPARATOR);
     var headerPartsDivided = {};
@@ -26,7 +30,11 @@ function parseFirstHeader(header) {
     return headerPartsDivided;
 }
 
-//parse the cookie header, and return cookies object
+/**
+ * parse the cookie header, and return cookies object
+ * @param headers - all of the packet headers
+ * @returns {{}} - an object built of all of the cookies seperated.
+ */
 function parseCookies(headers){
     var cookies = {};
     var cookiesStr, splitCookies;
@@ -49,6 +57,11 @@ function parseCookies(headers){
     return cookies;
 }
 
+/**
+ * the main module function. used to parse a request packet.
+ * @param requestString - the request packet string.
+ * @returns {module.exports|exports} - return a request object from the request.js module.
+ */
 module.exports.parse = function(requestString) {
 
     //split by lines, remove first useless line

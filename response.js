@@ -3,11 +3,15 @@ var EQUAL_SEPARATOR = "=";
 var SEMICOLON_SEPARATOR = "; ";
 var END_LINE = "\r\n";
 var SPACE_SEPARATOR = ' ';
-var COLON_SEPARATOR = ':';
+var COLON_SEPARATOR = ': ';
 
 var BODY_TYPE_STR = "Content-Type";
 var BODY_LENGTH_STR = "Content-Length";
 
+/**
+ * will hold the full mimetypes for each file type.
+ * @type {{js: string, txt: string, html: string, css: string, jpg: string, gif: string, png: string, json: string}}
+ */
 var mimetypes = {
     'js': 'application/javascript; charset=utf-8;',
     'txt': 'text/plain; charset=utf-8;',
@@ -19,6 +23,10 @@ var mimetypes = {
     'json': 'application/json'
 };
 
+/**
+ * will hold the status messages for each return code
+ * @type {{200: string, 302: string, 403: string, 404: string, 500: string}}
+ */
 var statusMessages = {
     200: ' OK',
     302: ' Found',
@@ -27,6 +35,13 @@ var statusMessages = {
     500: ' Internal Server Error'
 }
 
+/**
+ * a Cookie class to represent each cookie
+ * @param name - the cookie's name
+ * @param value - the cookie's value
+ * @param options - optional options for the cookie
+ * @constructor will create the cookkie instance.
+ */
 function Cookie(name, value, options){
     var that = this;
 
@@ -57,6 +72,11 @@ function Cookie(name, value, options){
     }
 }
 
+/**
+ * the main module response class, which actually represents a generic server response.
+ * @param version - the protocol version in use, e.g HTTP/1.0
+ * @param conn - the connection object used to stream the data
+ */
 module.exports = function(version, conn) {
     var that = this;
 
@@ -64,12 +84,18 @@ module.exports = function(version, conn) {
     var conn = conn;
 
     var headers = {};
-    var cookies = {};
+    var cookies = [];
     var statusCode = "200";
     headers[BODY_TYPE_STR] = mimetypes['html'];
     var sent = false;
 
-    //search for a matching object key to prop, Case Insensitive.
+    /**
+     * search for a matching object key to prop, Case Insensitive.
+     * @param object
+     * @param prop - the specific prop searched in object
+     * @returns {Array.<T>} - all the matching keys
+     * @constructor
+     */
     var CIgetProperty = function(object, prop){
         var objectKeys = Object.keys(object);
         return objectKeys.filter(function (oProp) {
@@ -77,6 +103,10 @@ module.exports = function(version, conn) {
         });
     };
 
+    /**
+     * a toString function for the response headers including cookies.
+     * @returns {string} - a string representing the response without it's body.
+     */
     var getHeaderStr = function(){
         var responseString = "";
         responseString += version.concat(SPACE_SEPARATOR, statusCode, statusMessages[statusCode], END_LINE);
@@ -91,10 +121,21 @@ module.exports = function(version, conn) {
             }
         }
 
+        for(var cookie in cookies){
+            if(cookies.hasOwnProperty(cookie)){
+                responseString += cookies[cookie].toString();
+            }
+        }
+
         responseString += END_LINE;
         return responseString;
     };
 
+    /**
+     * a setter for an header
+     * @param field - the header to set
+     * @param value - the value to give the header
+     */
     this.set = function(field, value){
 
         var argsObj;
@@ -117,12 +158,21 @@ module.exports = function(version, conn) {
         }
     };
 
-    //easy to implement. we should just decide where the response header will be made
+    /**
+     * set the response status code
+     * @param code - the code to change to
+     * @returns {module} - the obj
+     */
     this.status = function(code){
         statusCode = code;
         return that;
     };
 
+    /**
+     * a getter for a specific header
+     * @param field - the header to get
+     * @returns {*} - either the value of the requested header, or undefined if not found.
+     */
     this.get = function(field){
         var tempKeys = CIgetProperty(headers, field);
 
@@ -136,6 +186,11 @@ module.exports = function(version, conn) {
 
     };
 
+    /**
+     * set a cookie for the response
+     * @param name - the cookie name
+     * @param value - the cookie value
+     */
     this.cookie = function(name, value) {
         var cookieOptions = null;
         if(arguments.length == 3){
@@ -145,6 +200,10 @@ module.exports = function(version, conn) {
         cookies.push(new Cookie(name, value, cookieOptions));
     };
 
+    /**
+     * send this response to the connection conn
+     * @param body - the response's body, in a string format.
+     */
     this.send = function(body){
         sent = true;
         headers[BODY_LENGTH_STR] = body.length;
@@ -152,15 +211,27 @@ module.exports = function(version, conn) {
         conn.write(body);
     };
 
+    /**
+     * send this response to the connection conn
+     * @param body - the response's body, in a json format.
+     */
     this.json = function(body){
         headers[BODY_TYPE_STR] = mimetypes['json'];
         that.send(JSON.stringify(body));
     };
 
+    /**
+     * a setter for the body content type
+     * @param type - the content type
+     */
     this.type = function(type){
         headers[BODY_TYPE_STR] = mimetypes[type];
     };
 
+    /**
+     * a resetter for the response obj. resets all relevant values.
+     * @returns {module} - the obj.
+     */
     this.reset = function(){
         headers = {};
         cookies = {};
@@ -169,6 +240,10 @@ module.exports = function(version, conn) {
         return that;
     };
 
+    /**
+     * returns the flag sent indicating whether this response was sent.
+     * @returns {boolean} - true iff the response was sent.
+     */
     this.wasSent = function(){
         return sent;
     };
