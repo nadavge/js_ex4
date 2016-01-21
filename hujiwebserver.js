@@ -64,12 +64,23 @@ module.exports.static = function(rootFolder) {
     };
 }
 
-// TODO implement a what is my ip function?
-// Maybe a redirect to another path?
-module.exports.myUse = function() {
+/**
+* @brief A handler to redirect urls to a new url
+*
+* @param newUrl the new url to redirect to
+*
+* @return A handler, that handles HTTP requests and redirects them
+*/
+module.exports.myUse = function(newUrl) {
+
+    return function(request, response, next) {
+        response.status(302).set('Location', newUrl);
+        response.send('');
+    };
 
     this.toString() = function() {
-        //TODO add a description
+        return `Allows redirection of a resource to a new url, useful for login
+            redirections, site restructuring, new domain, and many more use cases`;
     }
 }
 
