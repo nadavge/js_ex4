@@ -42,6 +42,10 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
                 }
 
                 response = new Response(request.version, conn);
+                // Check whether the request hints for a connection close
+                if (request.shouldClose()) {
+                    response.shouldClose();
+                }
 
                 try {
                     hujiwebserver.route(request, response);
@@ -51,11 +55,6 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
                         .reset().status(CODE_SERVER_ERROR).send(BODY_SERVER_ERROR);
                     conn.end();
                     return;
-                }
-
-                // Check whether the request hints for a connection close
-                if (request.shouldClose()) {
-                    conn.end();
                 }
             }
         );

@@ -88,6 +88,7 @@ module.exports = function(version, conn) {
     var statusCode = "200";
     headers[BODY_TYPE_STR] = mimetypes['html'];
     var sent = false;
+    var closeOnSend = false;
 
     /**
      * search for a matching object key to prop, Case Insensitive.
@@ -221,6 +222,9 @@ module.exports = function(version, conn) {
         headers[BODY_LENGTH_STR] = body.length;
         conn.write(getHeaderStr());
         conn.write(body);
+        if (closeOnSend) {
+            conn.end();
+        }
     };
 
     /**
@@ -258,6 +262,10 @@ module.exports = function(version, conn) {
      */
     this.wasSent = function(){
         return sent;
+    };
+
+    this.shouldClose = function() {
+        closeOnSend = true;
     };
 
 };

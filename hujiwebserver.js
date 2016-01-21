@@ -140,12 +140,6 @@ function HujiWebServer(port, callback) {
             match.handler(request, response, function() {
                 that.route(request, response, match);
             });
-
-            // In case none of the response handlers sent, send page not found
-            if (! response.wasSent()) {
-                response
-                    .reset().status(CODE_PAGE_NOT_FOUND).send(BODY_PAGE_NOT_FOUND);
-            }
         }
     }
 
