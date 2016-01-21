@@ -1,0 +1,61 @@
+@import url("bootstrap.min.css");
+
+body
+{
+	background-color:#F9F9F9;
+}
+
+@media (min-width:800px)
+{
+	.container
+	{
+		width:800px;
+		margin:0 auto;
+	}
+}
+
+form.login
+{
+	width:200px;
+	margin:0 auto;
+}
+
+#messages
+{
+	width:300px;
+	text-align:center;
+	margin:0 auto;
+}
+
+.navigation
+{
+	margin-bottom:10px;
+}
+
+#myphoto
+{
+	float:right;
+	width:200px;
+	height:200px;
+	background:url('../images/me.jpg');
+}
+
+#myphoto:hover
+{
+	background:url('../images/me2.jpg');
+}
+
+.page
+{
+	display:none;
+}
+
+.page.active
+{
+	display:block;
+}
+
+.calculator
+{
+	margin:10px 0;
+}
