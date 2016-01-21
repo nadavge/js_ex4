@@ -17,7 +17,7 @@ function pathIncluded(checkedPath, includingPath) {
     return true;
 
 }
-//s
+
 module.exports = function (headers, query, method, cookies, path, host, version, protocol, body) {
 
     var that = this;

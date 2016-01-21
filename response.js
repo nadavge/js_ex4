@@ -18,7 +18,7 @@ var mimetypes = {
     'png': 'image/png',
     'json': 'application/json'
 };
-//s
+
 function Cookie(name, value, options){
     var that = this;
 

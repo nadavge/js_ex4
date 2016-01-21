@@ -15,7 +15,7 @@ var REQUEST_FORMAT_INVALID = new Error("The provided HTTP request format was inv
 
 var url = require('url');
 
-//parse the main packet headerf
+//parse the main packet header
 function parseFirstHeader(header) {
     var headerParts = header.split(SPACE_SEPARATOR);
     var headerPartsDivided = {};
