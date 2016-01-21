@@ -21,7 +21,6 @@ var mimetypes = {
     'gif': 'image/gif',
     'png': 'image/png',
     'json': 'application/json',
-    'bin': 'application/octet-stream'
 };
 
 /**
@@ -210,11 +209,11 @@ module.exports = function(version, conn) {
         if (body === undefined || body === null) {
             body = '';
         }
-        if (typeof body === 'object') {
+
+        if (body instanceof Buffer) {
+        } else if (typeof body === 'object') {
             that.json(body);
             return;
-        } else if (typeof body === 'buffer') {
-            headers[BODY_TYPE_STR] = mimetypes['bin'];
         } else if (typeof body === 'number') {
             body = body.toString();
         }
