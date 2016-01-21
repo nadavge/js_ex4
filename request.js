@@ -17,8 +17,10 @@ function pathIncluded(checkedPath, includingPath) {
     return true;
 
 }
-
+//s
 module.exports = function (headers, query, method, cookies, path, host, version, protocol, body) {
+
+    var that = this;
 
     this.query = query;
     this.method = method;
@@ -47,7 +49,7 @@ module.exports = function (headers, query, method, cookies, path, host, version,
             return true;
         }
         return false;
-    }
+    };
     
     this.get = function (field) {
         if (headers.hasOwnProperty(field)) {
@@ -67,18 +69,23 @@ module.exports = function (headers, query, method, cookies, path, host, version,
     };
 
     this.is = function (type) {
-        var contentType = this.get(TYPE_STR);
+        var contentType = that.get(TYPE_STR);
 
-        if (type === contentType)
+        if (type === contentType) {
             return true;
+        }
+
 
         var splitType = type.split(SLASH_SEPARATOR);
 
-        if (type === splitType[splitType.length - 1])
+        if (type === splitType[splitType.length - 1]) {
             return true;
+        }
 
-        if (pathIncluded(contentType, type))
+        if (pathIncluded(contentType, type)){
             return true;
+        }
+
 
         return false;
     };

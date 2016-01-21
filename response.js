@@ -18,7 +18,7 @@ var mimetypes = {
     'png': 'image/png',
     'json': 'application/json'
 };
-
+//s
 function Cookie(name, value, options){
     var that = this;
 
@@ -64,11 +64,9 @@ module.exports = function(version, conn) {
     //search for a matching object key to prop, Case Insensitive.
     var CIgetProperty = function(object, prop){
         var objectKeys = Object.keys(object);
-        var objectRelevantKeys = objectKeys.filter(function (oProp) {
+        return objectKeys.filter(function (oProp) {
             return oProp.toLowerCase() === prop.toLowerCase();
         });
-
-        return objectRelevantKeys;
     };
 
     var getHeaderStr = function(){
@@ -165,6 +163,6 @@ module.exports = function(version, conn) {
 
     this.wasSent = function(){
         return sent;
-    }
+    };
 
-}
+};
