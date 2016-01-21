@@ -29,8 +29,10 @@ module.exports.ConnectionHandler = function(hujiwebserver, callback) {
 
                 try {
                     request = requestParser.parse(data);
+                    // TODO create response object (needs only http version)
                     // TODO Embbed the connection in the response
                     hujiwebserver.route(request, response);
+                    // TODO check whether to close the connection
                 } catch (e) {
                     // TODO Handle a faulty HTTP, and send 500
                     // conn.end(RESPONSE with 500);

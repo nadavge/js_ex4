@@ -1,6 +1,9 @@
 var hujinet = require('./hujinet');
 var Router = require('./router');
 
+const CODE_PAGE_NOT_FOUND = 404;
+const BODY_PAGE_NOT_FOUND = 'Page Not Found';
+
 /**
 * @brief Start a new huji webserver
 *
@@ -65,14 +68,19 @@ function HujiWebServer(port, callback) {
 
         match = router.route(request.path, lastMatch);
         if (match === null) {
-            // TODO respond with 404
+            response
+                .reset().status(CODE_PAGE_NOT_FOUND).send(BODY_PAGE_NOT_FOUND);
         } else {
             request.setUrlParams(match.params);
             match.handler(request, response, function() {
                 that.route(request, response, match);
             });
 
-            // TODO check if send was called, otherwise send a 500
+            // In case none of the response handlers sent, send page not found
+            if (! response.wasSent()) {
+                response
+                    .reset().status(CODE_PAGE_NOT_FOUND).send(BODY_PAGE_NOT_FOUND);
+            }
         }
     }
 
