@@ -63,7 +63,6 @@ function parseCookies(headers){
  * @returns {module.exports|exports} - return a request object from the request.js module.
  */
 module.exports.parse = function(requestString) {
-
     //split by lines, remove first useless line
     var requestLines = requestString.split(LINE_SEPARATOR);
     var header;
@@ -84,13 +83,15 @@ module.exports.parse = function(requestString) {
     query = parsedUrl.query;
     path = parsedUrl.pathname;
     //in case there's a port in the host name
-    host = (parsedUrl.host).split(COLON_SEPARATOR)[0];
+    host = parsedUrl.host;
+    if (host !== null) {
+        host = host.split(COLON_SEPARATOR)[0]
+    }
 
-    //if protocol is present in the url
-    if(parsedUrl.hasOwnProperty('protocol'))
-        protocol = (parsedUrl.protocol).split(COLON_SEPARATOR)[0];
-    else
-        protocol = null;
+    protocol = parsedUrl.protocol;
+    if (protocol !== null) {
+        protocol = protocol.split(COLON_SEPARATOR)[0]
+    }
 
     //get to the body part
     requestLines.splice(0,1);
