@@ -46,9 +46,9 @@ module.exports = function (headers, query, method, cookies, path, host, version,
     this.path = path;
     this.host = host;
     this.version = version;
+    this.params = {};
 
     var headers = headers;
-    var urlParams = {};
 
     if (protocol !== null) {
         this.protocol = protocol;
@@ -91,8 +91,8 @@ module.exports = function (headers, query, method, cookies, path, host, version,
      * @returns {*} - the param value if present, or undefined o.w.
      */
     this.param = function (name) {
-        if(urlParams.hasOwnProperty(name))
-            return urlParams[name];
+        if(this.params.hasOwnProperty(name))
+            return this.params[name];
         if(query.hasOwnProperty(name))
             return query[name];
 
@@ -127,9 +127,9 @@ module.exports = function (headers, query, method, cookies, path, host, version,
 
     /**
      * a setter for the url params object.
-     * @param urlParamsArg - the url params.
+     * @param paramsArg - the url params.
      */
-    this.setUrlParams = function (urlParamsArg) {
-        urlParams = urlParamsArg;
+    this.setUrlParams = function (paramsArg) {
+        this.params = paramsArg;
     };
 };
