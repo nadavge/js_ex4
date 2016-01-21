@@ -105,7 +105,7 @@ module.exports = function (headers, query, method, cookies, path, host, version,
      * @returns {boolean} - true iff the body content type in type.
      */
     this.is = function (type) {
-        var contentType = that.get(BODY_TYPE_STR);
+        var contentType = that.get(BODY_TYPE_STR).split(';')[0];
 
         if (type === contentType) {
             return true;
